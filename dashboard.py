@@ -12,7 +12,7 @@ st.set_page_config(
     page_title="Dashboard NPS – Matriz Educação",
     page_icon="🎓",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # ── Constants ──────────────────────────────────────────────────────────────────
@@ -237,16 +237,15 @@ MATRIZ_DARK   = "#0d3d6b"
 def inject_css():
     st.markdown(f"""
     <style>
-    /* ── Sidebar ── */
+
+    /* ══════════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════════ */
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, {MATRIZ_DARK} 0%, {MATRIZ_BLUE} 100%);
     }}
     [data-testid="stSidebar"] * {{
         color: #ffffff !important;
-    }}
-    [data-testid="stSidebar"] .stRadio label {{
-        color: #ffffff !important;
-        font-size: 0.95rem;
     }}
     [data-testid="stSidebar"] hr {{
         border-color: rgba(255,255,255,0.2) !important;
@@ -255,9 +254,6 @@ def inject_css():
         background: rgba(255,255,255,0.08) !important;
         border: 1px solid rgba(255,255,255,0.15) !important;
         border-radius: 8px;
-    }}
-    [data-testid="stSidebar"] .stExpander summary {{
-        color: #ffffff !important;
     }}
     [data-testid="stSidebar"] input[type="password"] {{
         background: rgba(255,255,255,0.12) !important;
@@ -271,18 +267,17 @@ def inject_css():
         color: #ffffff !important;
     }}
 
-    /* ── Nav pills ── */
-    div[data-testid="stSidebar"] .stRadio > div {{
-        gap: 6px;
-    }}
+    /* Nav pills */
+    div[data-testid="stSidebar"] .stRadio > div {{ gap: 6px; }}
     div[data-testid="stSidebar"] .stRadio > div > label {{
         background: rgba(255,255,255,0.08);
         border: 1px solid rgba(255,255,255,0.15);
         border-radius: 8px;
-        padding: 10px 14px;
+        padding: 12px 14px;
         width: 100%;
         transition: background 0.2s;
         font-weight: 500;
+        font-size: 1rem;
     }}
     div[data-testid="stSidebar"] .stRadio > div > label:hover {{
         background: rgba(129,215,66,0.25);
@@ -295,39 +290,53 @@ def inject_css():
         font-weight: 700;
     }}
 
-    /* ── Main area ── */
+    /* ══════════════════════════════════════════
+       MAIN CONTAINER
+    ══════════════════════════════════════════ */
+    .main .block-container {{
+        padding-top: 1.2rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+    }}
     .main-header {{
         border-left: 5px solid {MATRIZ_GREEN};
         padding-left: 14px;
         margin-bottom: 8px;
     }}
-    .main-header h1, .main-header h2 {{
+    .main-header h1 {{
         margin: 0;
         color: {MATRIZ_DARK};
+        font-size: 1.6rem;
     }}
 
-    /* ── Metric cards ── */
+    /* ══════════════════════════════════════════
+       METRIC CARDS
+    ══════════════════════════════════════════ */
     [data-testid="stMetric"] {{
         background: #f8fff3;
         border: 1px solid {MATRIZ_GREEN};
         border-left: 4px solid {MATRIZ_GREEN};
         border-radius: 10px;
-        padding: 12px 16px !important;
+        padding: 10px 14px !important;
     }}
     [data-testid="stMetricLabel"] {{
         color: {MATRIZ_BLUE} !important;
         font-weight: 600;
+        font-size: 0.8rem !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }}
     [data-testid="stMetricValue"] {{
         color: {MATRIZ_DARK} !important;
-        font-size: 1.8rem !important;
+        font-size: 1.6rem !important;
         font-weight: 700;
     }}
 
-    /* ── Section headers ── */
-    h2, h3 {{
-        color: {MATRIZ_DARK} !important;
-    }}
+    /* ══════════════════════════════════════════
+       TYPOGRAPHY
+    ══════════════════════════════════════════ */
+    h2, h3 {{ color: {MATRIZ_DARK} !important; }}
     h2::after {{
         content: "";
         display: block;
@@ -338,28 +347,37 @@ def inject_css():
         border-radius: 2px;
     }}
 
-    /* ── Tabs ── */
+    /* ══════════════════════════════════════════
+       TABS
+    ══════════════════════════════════════════ */
     .stTabs [data-baseweb="tab-list"] {{
-        gap: 6px;
+        gap: 4px;
         border-bottom: 2px solid {MATRIZ_GREEN};
+        flex-wrap: wrap;
     }}
     .stTabs [data-baseweb="tab"] {{
         border-radius: 8px 8px 0 0;
         font-weight: 600;
+        font-size: 0.9rem;
+        padding: 8px 12px;
     }}
     .stTabs [aria-selected="true"] {{
         background: {MATRIZ_GREEN} !important;
         color: {MATRIZ_DARK} !important;
     }}
 
-    /* ── Buttons ── */
+    /* ══════════════════════════════════════════
+       BUTTONS
+    ══════════════════════════════════════════ */
     .stButton > button {{
         background: {MATRIZ_GREEN};
         color: {MATRIZ_DARK};
         font-weight: 700;
         border: none;
         border-radius: 8px;
-        padding: 10px 24px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        width: 100%;
         transition: opacity 0.2s;
     }}
     .stButton > button:hover {{
@@ -367,7 +385,9 @@ def inject_css():
         color: {MATRIZ_DARK};
     }}
 
-    /* ── Sidebar version badge ── */
+    /* ══════════════════════════════════════════
+       SIDEBAR FOOTER / LOGO
+    ══════════════════════════════════════════ */
     .sidebar-footer {{
         position: fixed;
         bottom: 18px;
@@ -376,21 +396,11 @@ def inject_css():
         text-align: center;
         width: 220px;
     }}
-
-    /* ── Logo area ── */
     .logo-area {{
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 20px 10px 10px 10px;
-    }}
-    .logo-title {{
-        color: #ffffff;
-        font-size: 1.1rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        margin-top: 6px;
-        text-transform: uppercase;
     }}
     .logo-subtitle {{
         color: {MATRIZ_GREEN};
@@ -398,8 +408,65 @@ def inject_css():
         font-weight: 600;
         letter-spacing: 2px;
         text-transform: uppercase;
-        margin-top: 2px;
+        margin-top: 4px;
     }}
+
+    /* ══════════════════════════════════════════
+       MOBILE  (≤ 768 px)
+    ══════════════════════════════════════════ */
+    @media (max-width: 768px) {{
+
+        /* Container sem padding lateral excessivo */
+        .main .block-container {{
+            padding-left: 0.6rem !important;
+            padding-right: 0.6rem !important;
+            padding-top: 0.8rem !important;
+        }}
+
+        /* Empilhar todas as colunas */
+        [data-testid="column"] {{
+            width: 100% !important;
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+        }}
+
+        /* Título menor */
+        .main-header h1 {{ font-size: 1.15rem !important; }}
+
+        /* Métricas compactas */
+        [data-testid="stMetricValue"] {{ font-size: 1.3rem !important; }}
+        [data-testid="stMetricLabel"] {{ font-size: 0.72rem !important; }}
+        [data-testid="stMetric"] {{ padding: 8px 10px !important; }}
+
+        /* Tabs com texto menor */
+        .stTabs [data-baseweb="tab"] {{
+            font-size: 0.78rem !important;
+            padding: 6px 8px !important;
+        }}
+
+        /* Botão full-width (já está, mantém) */
+        .stButton > button {{ font-size: 0.95rem; padding: 12px 16px; }}
+
+        /* Esconder sidebar footer fixo no mobile */
+        .sidebar-footer {{ display: none; }}
+
+        /* Dataframe ocupa largura total */
+        [data-testid="stDataFrame"] {{ font-size: 0.8rem; }}
+
+        /* Selectbox maior para toque */
+        .stSelectbox > div {{ min-height: 44px; }}
+    }}
+
+    /* ══════════════════════════════════════════
+       MOBILE PEQUENO  (≤ 480 px)
+    ══════════════════════════════════════════ */
+    @media (max-width: 480px) {{
+        .main-header h1 {{ font-size: 1rem !important; }}
+        [data-testid="stMetricValue"] {{ font-size: 1.1rem !important; }}
+        h2 {{ font-size: 1.05rem !important; }}
+        h3 {{ font-size: 0.95rem !important; }}
+    }}
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -506,12 +573,13 @@ def main():
         overall_nps, ov_prom, ov_detr, ov_neut = compute_nps(overall_scores)
         above_target = (summary_df["NPS"] >= NPS_TARGET).sum()
 
-        c1, c2, c3, c4, c5 = st.columns(5)
-        c1.metric("NPS Geral da Rede", f"{overall_nps}", f"Meta: {NPS_TARGET}")
-        c2.metric("Total de Respostas", f"{total_responses:,}")
-        c3.metric("Unidades acima da meta", f"{above_target}/10")
-        c4.metric("% Promotores (rede)", f"{round(ov_prom/len(overall_scores)*100,1)}%")
-        c5.metric("% Detratores (rede)", f"{round(ov_detr/len(overall_scores)*100,1)}%")
+        c1, c2, c3 = st.columns(3)
+        c1.metric("NPS Geral", f"{overall_nps}", f"Meta: {NPS_TARGET}")
+        c2.metric("Respostas", f"{total_responses:,}")
+        c3.metric("Acima da meta", f"{above_target}/10")
+        c4, c5 = st.columns(2)
+        c4.metric("% Promotores", f"{round(ov_prom/len(overall_scores)*100,1)}%")
+        c5.metric("% Detratores", f"{round(ov_detr/len(overall_scores)*100,1)}%")
 
         st.divider()
 
@@ -533,12 +601,12 @@ def main():
             fig_bar.add_vline(x=NPS_TARGET, line_dash="dash", line_color="red",
                               annotation_text=f"Meta {NPS_TARGET}", annotation_position="top right")
             fig_bar.update_layout(
-                height=420, xaxis_title="NPS", yaxis_title="",
+                height=340, xaxis_title="NPS", yaxis_title="",
                 margin=dict(l=10, r=60, t=20, b=20),
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 xaxis=dict(range=[-20, 110]),
             )
-            st.plotly_chart(fig_bar, width='stretch')
+            st.plotly_chart(fig_bar, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
         with col_right:
             st.subheader("Distribuição da Rede")
@@ -551,11 +619,11 @@ def main():
                 textinfo="label+percent",
             ))
             fig_pie.update_layout(
-                height=300, margin=dict(l=10, r=10, t=20, b=20),
+                height=260, margin=dict(l=10, r=10, t=20, b=20),
                 showlegend=False,
                 paper_bgcolor="rgba(0,0,0,0)",
             )
-            st.plotly_chart(fig_pie, width='stretch')
+            st.plotly_chart(fig_pie, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
             # Gauge geral
             fig_gauge = go.Figure(go.Indicator(
@@ -574,9 +642,9 @@ def main():
                     "threshold": {"line": {"color": "red", "width": 3}, "value": NPS_TARGET},
                 },
             ))
-            fig_gauge.update_layout(height=240, margin=dict(l=20, r=20, t=40, b=10),
+            fig_gauge.update_layout(height=210, margin=dict(l=20, r=20, t=40, b=10),
                                     paper_bgcolor="rgba(0,0,0,0)")
-            st.plotly_chart(fig_gauge, width='stretch')
+            st.plotly_chart(fig_gauge, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
         # Tabela detalhada
         st.subheader("Tabela Resumo por Unidade")
@@ -613,13 +681,13 @@ def main():
             textposition="auto",
         ))
         fig_comp.update_layout(
-            barmode="group", height=350,
+            barmode="group", height=300,
             xaxis_tickangle=-30,
             margin=dict(l=10, r=10, t=20, b=80),
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
             legend=dict(orientation="h", yanchor="bottom", y=1.02),
         )
-        st.plotly_chart(fig_comp, width='stretch')
+        st.plotly_chart(fig_comp, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
     # ── PAGE 2: Análise por Unidade ────────────────────────────────────────────
     elif page == "🏫  Análise por Unidade":
@@ -631,13 +699,14 @@ def main():
         nps, prom, detr, neut = compute_nps(scores)
 
         # KPIs da unidade
-        c1, c2, c3, c4, c5 = st.columns(5)
         delta = nps - NPS_TARGET
+        c1, c2 = st.columns(2)
         c1.metric("NPS", nps, f"{delta:+d} vs meta", delta_color="normal")
-        c2.metric("Promotores", prom, f"{round(prom/len(scores)*100,1)}%")
-        c3.metric("Neutros", neut, f"{round(neut/len(scores)*100,1)}%")
-        c4.metric("Detratores", detr, f"{round(detr/len(scores)*100,1)}%")
-        c5.metric("Total Respostas", len(scores))
+        c2.metric("Total Respostas", len(scores))
+        c3, c4, c5 = st.columns(3)
+        c3.metric("Promotores", prom, f"{round(prom/len(scores)*100,1)}%")
+        c4.metric("Neutros", neut, f"{round(neut/len(scores)*100,1)}%")
+        c5.metric("Detratores", detr, f"{round(detr/len(scores)*100,1)}%")
 
         st.divider()
         col_l, col_r = st.columns([2, 3])
@@ -661,9 +730,9 @@ def main():
                     "threshold": {"line": {"color": "red", "width": 3}, "value": NPS_TARGET},
                 },
             ))
-            fig_g.update_layout(height=280, margin=dict(l=20, r=20, t=60, b=10),
+            fig_g.update_layout(height=240, margin=dict(l=20, r=20, t=60, b=10),
                                 paper_bgcolor="rgba(0,0,0,0)")
-            st.plotly_chart(fig_g, width='stretch')
+            st.plotly_chart(fig_g, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
             # Pizza segmentos
             fig_p = go.Figure(go.Pie(
@@ -673,9 +742,9 @@ def main():
                 hole=0.45,
                 textinfo="label+value+percent",
             ))
-            fig_p.update_layout(height=300, margin=dict(l=10, r=10, t=10, b=10),
+            fig_p.update_layout(height=260, margin=dict(l=10, r=10, t=10, b=10),
                                 showlegend=False, paper_bgcolor="rgba(0,0,0,0)")
-            st.plotly_chart(fig_p, width='stretch')
+            st.plotly_chart(fig_p, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
         with col_r:
             # Atributos – radar
@@ -698,12 +767,12 @@ def main():
                 ))
                 fig_radar.update_layout(
                     polar=dict(radialaxis=dict(visible=True, range=[0, 6])),
-                    height=380,
+                    height=320,
                     margin=dict(l=40, r=40, t=40, b=40),
                     paper_bgcolor="rgba(0,0,0,0)",
                     title="Avaliação por Atributo (média 1–6)",
                 )
-                st.plotly_chart(fig_radar, width='stretch')
+                st.plotly_chart(fig_radar, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
             # Distribuição das notas NPS
             score_counts = pd.Series(scores).value_counts().sort_index()
@@ -718,11 +787,11 @@ def main():
             ))
             fig_dist.update_layout(
                 title="Distribuição das Notas (0-10)",
-                height=260, margin=dict(l=10, r=10, t=40, b=20),
+                height=230, margin=dict(l=10, r=10, t=40, b=20),
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 xaxis_title="Nota", yaxis_title="Qtd",
             )
-            st.plotly_chart(fig_dist, width='stretch')
+            st.plotly_chart(fig_dist, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
         # Atributos – barras por categoria
         st.subheader("Médias por Atributo e Categoria")
@@ -742,12 +811,12 @@ def main():
                 textposition="outside",
             ))
         fig_attrs.update_layout(
-            height=350, xaxis=dict(range=[0, 6.5]), barmode="overlay",
+            height=300, xaxis=dict(range=[0, 6.5]), barmode="overlay",
             margin=dict(l=10, r=60, t=10, b=20),
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
             legend=dict(orientation="h", yanchor="bottom", y=1.02),
         )
-        st.plotly_chart(fig_attrs, width='stretch')
+        st.plotly_chart(fig_attrs, width='stretch', config={'responsive': True, 'displayModeBar': False})
 
         # Comentários por segmento
         st.subheader("Comentários por Segmento")
