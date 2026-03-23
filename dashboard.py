@@ -431,6 +431,16 @@ def main():
 
         st.divider()
 
+        # Filtro por tipo de respondente
+        st.markdown("<p style='font-size:0.72rem;letter-spacing:1.5px;color:rgba(255,255,255,0.5);margin-bottom:6px;text-transform:uppercase;'>Filtrar por</p>", unsafe_allow_html=True)
+        tipo_filtro = st.radio("", [
+            "👥  Todos",
+            "👨‍👩‍👧  Responsáveis",
+            "🎓  Alunos",
+        ], label_visibility="collapsed")
+
+        st.divider()
+
         # Chave Groq embutida via secrets (sem exposição no UI)
         _groq_builtin = st.secrets.get("GROQ_API_KEY", "")
 
@@ -466,8 +476,22 @@ def main():
 
     # Load data
     with st.spinner("Carregando dados..."):
-        frames = load_all_data()
-        summary_df = build_summary_df(frames)
+        frames_all = load_all_data()
+
+    # Aplicar filtro de tipo de respondente
+    tipo_map = {
+        "👥  Todos":           None,
+        "👨‍👩‍👧  Responsáveis":  "Responsável",
+        "🎓  Alunos":          "Aluno",
+    }
+    tipo_sel = tipo_map[tipo_filtro]
+    if tipo_sel:
+        frames = {u: df[df["_tipo"].str.contains(tipo_sel, case=False, na=False)]
+                  for u, df in frames_all.items()}
+    else:
+        frames = frames_all
+
+    summary_df = build_summary_df(frames)
 
     # ── PAGE 1: Visão Geral ────────────────────────────────────────────────────
     if page == "📊  Visão Geral":
