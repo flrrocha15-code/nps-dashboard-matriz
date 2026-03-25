@@ -33,15 +33,15 @@ UNIT_FILES = {
 }
 
 ATTR_COLS = {
-    "Qualidade do Ensino":         9,
-    "Acolhimento Emocional":       10,
-    "Recursos Pedagógicos":        11,
-    "Atendimento ao Público":      12,
-    "Canais de Comunicação":       13,
-    "Gestão Escolar":              14,
-    "Higiene e Conservação":       15,
-    "Alimentação":                 16,
-    "Conforto e Segurança":        17,
+    "Qualidade do Ensino":         10,
+    "Acolhimento Emocional":       11,
+    "Recursos Pedagógicos":        12,
+    "Atendimento ao Público":      13,
+    "Canais de Comunicação":       14,
+    "Gestão Escolar":              15,
+    "Higiene e Conservação":       16,
+    "Alimentação":                 17,
+    "Conforto e Segurança":        18,
 }
 
 CATEGORY_MAP = {
@@ -96,11 +96,11 @@ def load_all_data():
             continue
         df = pd.read_excel(path, sheet_name="CSAT 1", header=0)
         df["_unit"]     = unit
-        df["_nps_raw"]  = df.iloc[:, 7].apply(parse_score)
+        df["_nps_raw"]  = df.iloc[:, 8].apply(parse_score)
         df["_segment"]  = df["_nps_raw"].apply(classify_nps)
-        df["_feedback"] = df.iloc[:, 8].fillna("")
-        df["_comments"] = df.iloc[:, 18].fillna("")
-        df["_tipo"]     = df.iloc[:, 19].fillna("Não informado")
+        df["_feedback"] = df.iloc[:, 9].fillna("")
+        df["_comments"] = df.iloc[:, 19].fillna("")
+        df["_tipo"]     = df.iloc[:, 20].fillna("Não informado")
         for attr, col_idx in ATTR_COLS.items():
             df[f"_attr_{attr}"] = df.iloc[:, col_idx].apply(parse_score)
         frames[unit] = df
