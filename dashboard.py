@@ -578,8 +578,9 @@ def main():
         c2.metric("Respostas", f"{total_responses:,}")
         c3.metric("Acima da meta", f"{above_target}/10")
         c4, c5 = st.columns(2)
-        c4.metric("% Promotores", f"{round(ov_prom/len(overall_scores)*100,1)}%")
-        c5.metric("% Detratores", f"{round(ov_detr/len(overall_scores)*100,1)}%")
+        total_scores = len(overall_scores) if len(overall_scores) > 0 else 1
+        c4.metric("% Promotores", f"{round(ov_prom/total_scores*100,1)}%")
+        c5.metric("% Detratores", f"{round(ov_detr/total_scores*100,1)}%")
 
         st.divider()
 
