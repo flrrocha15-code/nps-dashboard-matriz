@@ -100,7 +100,7 @@ def load_all_data():
         df["_segment"]  = df["_nps_raw"].apply(classify_nps)
         df["_feedback"] = df.iloc[:, 9].fillna("")
         df["_comments"] = df.iloc[:, 19].fillna("")
-        df["_tipo"]     = df.iloc[:, 20].fillna("Não informado")
+        df["_tipo"]     = df.iloc[:, 6].fillna("Não informado").str.lower().str.strip()
         for attr, col_idx in ATTR_COLS.items():
             df[f"_attr_{attr}"] = df.iloc[:, col_idx].apply(parse_score)
         frames[unit] = df
@@ -548,8 +548,8 @@ def main():
     # Aplicar filtro de tipo de respondente
     tipo_map = {
         "👥  Todos":           None,
-        "👨‍👩‍👧  Responsáveis":  "Responsável",
-        "🎓  Alunos":          "Aluno",
+        "👨‍👩‍👧  Responsáveis":  "responsavel",
+        "🎓  Alunos":          "estudante",
     }
     tipo_sel = tipo_map[tipo_filtro]
     if tipo_sel:
