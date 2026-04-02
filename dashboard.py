@@ -238,6 +238,20 @@ def _md_clean(text: str) -> str:
     return text
 
 
+def _latin1(text: str) -> str:
+    """Substitui caracteres fora do Latin-1 por equivalentes ASCII."""
+    replacements = {
+        '\u2014': '-', '\u2013': '-', '\u2012': '-',  # tracos
+        '\u2018': "'", '\u2019': "'",                  # aspas simples
+        '\u201c': '"', '\u201d': '"',                  # aspas duplas
+        '\u2026': '...', '\u00b7': '-',                # reticencias, ponto medio
+        '\u2022': '-',                                 # bullet
+    }
+    for char, repl in replacements.items():
+        text = text.replace(char, repl)
+    return text.encode('latin-1', errors='replace').decode('latin-1')
+
+
 def generate_pdf(unit: str, doc_type: str, content: str) -> bytes:
     L, R, T, B = 18, 18, 18, 18
     pdf = FPDF()
@@ -258,9 +272,9 @@ def generate_pdf(unit: str, doc_type: str, content: str) -> bytes:
     pdf.ln(5)
 
     pdf.set_font("Helvetica", "B", 13)
-    pdf.cell(W, 8, f"Unidade: {unit}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(W, 8, _latin1(f"Unidade: {unit}"), new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "I", 11)
-    pdf.cell(W, 7, doc_type, new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(W, 7, _latin1(doc_type), new_x="LMARGIN", new_y="NEXT")
     pdf.ln(4)
     pdf.set_line_width(0.3)
     pdf.line(L, pdf.get_y(), pdf.w - R, pdf.get_y())
@@ -273,7 +287,7 @@ def generate_pdf(unit: str, doc_type: str, content: str) -> bytes:
             pdf.ln(3)
             continue
 
-        clean = _md_clean(stripped)
+        clean = _latin1(_md_clean(stripped))
 
         if stripped.startswith("### "):
             pdf.set_font("Helvetica", "B", 11)
@@ -301,7 +315,7 @@ def generate_pdf(unit: str, doc_type: str, content: str) -> bytes:
     pdf.set_y(-18)
     pdf.set_font("Helvetica", "I", 8)
     pdf.set_text_color(150, 150, 150)
-    pdf.cell(W, 6, f"Dashboard NPS Matriz Educacao  |  Pesquisa CSAT 1.2026  |  {unit}", align="C")
+    pdf.cell(W, 6, _latin1(f"Dashboard NPS Matriz Educacao  |  Pesquisa CSAT 1.2026  |  {unit}"), align="C")
 
     return bytes(pdf.output())
 
@@ -951,7 +965,7 @@ def main():
                 st.markdown("---")
                 st.markdown(st.session_state[f"summary_{unit}"])
 
-                pdf_bytes = generate_pdf(unit, "Resumo de Feedbacks — IA", st.session_state[f"summary_{unit}"])
+                pdf_bytes = generate_pdf(unit, "Resumo de Feedbacks - IA", st.session_state[f"summary_{unit}"])
                 st.download_button(
                     "⬇️ Baixar Resumo (PDF)",
                     data=pdf_bytes,
@@ -978,7 +992,7 @@ def main():
                 st.markdown("---")
                 st.markdown(st.session_state[f"plan_{unit}"])
 
-                pdf_bytes = generate_pdf(unit, "Plano de Ação — IA", st.session_state[f"plan_{unit}"])
+                pdf_bytes = generate_pdf(unit, "Plano de Acao - IA", st.session_state[f"plan_{unit}"])
                 st.download_button(
                     "⬇️ Baixar Plano de Ação (PDF)",
                     data=pdf_bytes,
