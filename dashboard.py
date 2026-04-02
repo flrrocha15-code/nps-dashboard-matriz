@@ -6,6 +6,7 @@ import os
 import re
 import anthropic
 from groq import Groq
+from fpdf import FPDF
 
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -227,6 +228,82 @@ Estruture o plano em:
 Seja específico, prático e orientado a resultados. Use linguagem profissional em português."""
 
     return call_ai(prompt, provider, api_key, max_tokens=2048)
+
+
+# ── PDF Generation ────────────────────────────────────────────────────────────
+def _md_clean(text: str) -> str:
+    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+    text = re.sub(r'\*(.*?)\*',     r'\1', text)
+    text = re.sub(r'`(.*?)`',       r'\1', text)
+    return text
+
+
+def generate_pdf(unit: str, doc_type: str, content: str) -> bytes:
+    L, R, T, B = 18, 18, 18, 18
+    pdf = FPDF()
+    pdf.set_margins(left=L, top=T, right=R)
+    pdf.set_auto_page_break(auto=True, margin=B)
+    pdf.add_page()
+    W = pdf.w - L - R
+
+    # ── Cabecalho ──
+    pdf.set_font("Helvetica", "B", 17)
+    pdf.cell(W, 10, "Matriz Educacao", new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.set_font("Helvetica", "", 11)
+    pdf.cell(W, 7, "Pesquisa CSAT 1.2026", new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.ln(3)
+    pdf.set_draw_color(28, 97, 172)
+    pdf.set_line_width(0.8)
+    pdf.line(L, pdf.get_y(), pdf.w - R, pdf.get_y())
+    pdf.ln(5)
+
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.cell(W, 8, f"Unidade: {unit}", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "I", 11)
+    pdf.cell(W, 7, doc_type, new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(4)
+    pdf.set_line_width(0.3)
+    pdf.line(L, pdf.get_y(), pdf.w - R, pdf.get_y())
+    pdf.ln(6)
+
+    # ── Conteudo — parse simples de markdown ──
+    for line in content.split("\n"):
+        stripped = line.strip()
+        if not stripped:
+            pdf.ln(3)
+            continue
+
+        clean = _md_clean(stripped)
+
+        if stripped.startswith("### "):
+            pdf.set_font("Helvetica", "B", 11)
+            pdf.multi_cell(W, 6, clean[4:])
+            pdf.ln(1)
+        elif stripped.startswith("## "):
+            pdf.set_font("Helvetica", "B", 12)
+            pdf.multi_cell(W, 7, clean[3:])
+            pdf.ln(2)
+        elif stripped.startswith("# "):
+            pdf.set_font("Helvetica", "B", 13)
+            pdf.multi_cell(W, 8, clean[2:])
+            pdf.ln(2)
+        elif stripped.startswith(("- ", "* ")):
+            pdf.set_font("Helvetica", "", 10)
+            pdf.multi_cell(W, 6, f"  - {clean[2:]}")
+        elif re.match(r'^\d+\.', stripped):
+            pdf.set_font("Helvetica", "", 10)
+            pdf.multi_cell(W, 6, clean)
+        else:
+            pdf.set_font("Helvetica", "", 10)
+            pdf.multi_cell(W, 6, clean)
+
+    # ── Rodape ──
+    pdf.set_y(-18)
+    pdf.set_font("Helvetica", "I", 8)
+    pdf.set_text_color(150, 150, 150)
+    pdf.cell(W, 6, f"Dashboard NPS Matriz Educacao  |  Pesquisa CSAT 1.2026  |  {unit}", align="C")
+
+    return bytes(pdf.output())
 
 
 # ── CSS Theme ─────────────────────────────────────────────────────────────────
@@ -874,11 +951,12 @@ def main():
                 st.markdown("---")
                 st.markdown(st.session_state[f"summary_{unit}"])
 
+                pdf_bytes = generate_pdf(unit, "Resumo de Feedbacks — IA", st.session_state[f"summary_{unit}"])
                 st.download_button(
-                    "⬇️ Baixar Resumo (.txt)",
-                    data=st.session_state[f"summary_{unit}"],
-                    file_name=f"resumo_nps_{unit.lower().replace(' ','_')}.txt",
-                    mime="text/plain",
+                    "⬇️ Baixar Resumo (PDF)",
+                    data=pdf_bytes,
+                    file_name=f"resumo_nps_{unit.lower().replace(' ','_')}_CSAT1_2026.pdf",
+                    mime="application/pdf",
                 )
 
         with tab_plan:
@@ -900,11 +978,12 @@ def main():
                 st.markdown("---")
                 st.markdown(st.session_state[f"plan_{unit}"])
 
+                pdf_bytes = generate_pdf(unit, "Plano de Ação — IA", st.session_state[f"plan_{unit}"])
                 st.download_button(
-                    "⬇️ Baixar Plano de Ação (.txt)",
-                    data=st.session_state[f"plan_{unit}"],
-                    file_name=f"plano_acao_nps_{unit.lower().replace(' ','_')}.txt",
-                    mime="text/plain",
+                    "⬇️ Baixar Plano de Ação (PDF)",
+                    data=pdf_bytes,
+                    file_name=f"plano_acao_nps_{unit.lower().replace(' ','_')}_CSAT1_2026.pdf",
+                    mime="application/pdf",
                 )
 
         # Comparativo todas as unidades abaixo da meta
