@@ -5,7 +5,7 @@ import plotly.express as px
 import os
 import re
 import anthropic
-from groq import Groq
+from openai import OpenAI
 from fpdf import FPDF
 
 # ── Page config ────────────────────────────────────────────────────────────────
@@ -145,11 +145,11 @@ def get_feedbacks_text(df):
 
 
 # ── AI calls ──────────────────────────────────────────────────────────────────
-def _call_groq(prompt, api_key, max_tokens=2048):
-    """Call Groq (free tier – Llama 3)."""
-    client = Groq(api_key=api_key)
+def _call_openai(prompt, api_key, max_tokens=2048):
+    """Call OpenAI ChatGPT."""
+    client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="gpt-4o",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=max_tokens,
     )
@@ -168,8 +168,8 @@ def _call_anthropic(prompt, api_key, max_tokens=2048):
 
 
 def call_ai(prompt, provider, api_key, max_tokens=2048):
-    if provider == "Groq – Llama 3 (Grátis)":
-        return _call_groq(prompt, api_key, max_tokens)
+    if provider == "ChatGPT – GPT-4o (Pago)":
+        return _call_openai(prompt, api_key, max_tokens)
     return _call_anthropic(prompt, api_key, max_tokens)
 
 
@@ -599,22 +599,22 @@ def main():
 
         st.divider()
 
-        # Chave Groq embutida via secrets (sem exposição no UI)
-        _groq_builtin = st.secrets.get("GROQ_API_KEY", "")
+        # Chave OpenAI embutida via secrets (sem exposição no UI)
+        _openai_builtin = st.secrets.get("OPENAI_API_KEY", "")
 
-        # Configurações de IA – apenas Anthropic precisa de chave manual
+        # Configurações de IA
         with st.expander("⚙️  Configurações de IA"):
             provider = st.selectbox(
                 "Provedor",
-                ["Groq – Llama 3 (Grátis)", "Anthropic Claude (Pago)"],
+                ["ChatGPT – GPT-4o (Pago)", "Anthropic Claude (Pago)"],
             )
-            if provider == "Groq – Llama 3 (Grátis)":
-                api_key = _groq_builtin
+            if provider == "ChatGPT – GPT-4o (Pago)":
+                api_key = _openai_builtin
                 if api_key:
-                    st.success("✅ IA Groq ativa")
+                    st.success("✅ ChatGPT ativo")
                 else:
-                    api_key = st.text_input("API Key (Groq)", type="password",
-                                            help="Grátis em console.groq.com")
+                    api_key = st.text_input("API Key (OpenAI)", type="password",
+                                            help="Disponível em platform.openai.com")
             else:
                 api_key = st.text_input("API Key (Anthropic)", type="password")
 
@@ -629,7 +629,7 @@ def main():
         """, unsafe_allow_html=True)
 
     # Recover from session_state (set inside sidebar expander)
-    provider = st.session_state.get("_provider", "Groq – Llama 3 (Grátis)")
+    provider = st.session_state.get("_provider", "ChatGPT – GPT-4o (Pago)")
     api_key  = st.session_state.get("_api_key", "")
 
     # Load data
